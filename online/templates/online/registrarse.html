@@ -1,0 +1,102 @@
+{% extends "online/layouts/base.html" %}
+
+{% load static %}
+
+
+{% block titulo %}
+Registrarse
+{% endblock %}
+
+{% block contenido %}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Registrarse</h2>
+            <ul>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">Registrarse como cliente</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+<!-- Begin Kenne's Login Register Area -->
+<div class="kenne-login-register_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xs-12">
+                <form method="POST" action="" id="formulario-registrarse">
+                    {% csrf_token %}
+                    <div class="login-form">
+                        <h4 class="login-title"></h4>
+                        <div class="row">
+                            <div class="col-md-6 col-12 mb--20">
+                                <label>Nombres</label>
+                                <input class="form-control" type="text" name="nombres" placeholder="Nombres">
+                            </div>
+                            <div class="col-md-6 col-12 mb--20">
+                                <label>Apellidos</label>
+                                <input class="form-control" type="text" name="apellidos" placeholder="Apellidos">
+                            </div>
+                            <div class="col-md-12">
+                                <label>Correo electrónico</label>
+                                <input class="form-control" type="email" name="email" placeholder="Correo electrónico">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Contraseña</label>
+                                <input class="form-control" type="password" name="password" placeholder="Contraseña">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Confirmar contraseña</label>
+                                <input class="form-control" type="password" name="confirmar_password" placeholder="Confirmar contraseña">
+                            </div>
+                            <div class="col-12">
+                                <button class="kenne-register_btn" type="submit">Registrarse</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Login Register Area  End Here -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    document.getElementById("formulario-registrarse").addEventListener("submit", function(evento){
+        evento.preventDefault();
+        guardar();
+    });
+
+    function guardar(){
+        // formdata
+        const formulario = document.getElementById("formulario-registrarse");
+        const data = new FormData(formulario);
+        /*data.append("nombres", document.getElementById("nombres").value);
+        data.append("apellidos", document.getElementById("apellidos").value);
+        data.append("email", document.getElementById("email").value);
+        data.append("password", document.getElementById("password").value);
+        data.append("confirmar_password", document.getElementById("confirmar_password").value);*/
+
+        axios.post('{% url "registrar_cliente" %}', data)
+        .then(function(response){
+            const message = response.data.message;
+            toastr.success(message, "Mensaje del sistema")
+            formulario.reset()
+        })
+        .catch(function(error){
+            if(error.response){
+                const message = error.response.data.message;
+                if(error.response.status == 422){
+                    mostrarErrores("formulario-registrarse", error.response.data.errors)
+                }
+                toastr.error(message, "Mensaje del sistema")
+            }
+        });
+    }
+
+</script>
+{% endblock %}

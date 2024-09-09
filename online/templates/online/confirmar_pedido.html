@@ -1,0 +1,199 @@
+{% extends 'online/layouts/base.html' %}
+
+{% load static %}
+
+{% block titulo %}
+Confirmar pedido
+{% endblock %}
+
+{% block contenido %}
+    <!-- Begin Kenne's Breadcrumb Area -->
+    <div class="breadcrumb-area">
+        <div class="container">
+            <div class="breadcrumb-content">
+                <h2>Registrar pedido</h2>
+                <ul>
+                    <li><a href="{% url 'portada' %}">Inicio</a></li>
+                    <li class="active">Pagar</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Kenne's Breadcrumb Area End Here -->
+    <!-- Begin Kenne's Checkout Area -->
+    <div class="checkout-area">
+        <div class="container">
+            <form action="{% url 'guardar_pedido' %}" method="POST" id="formulario-registrar-pedido">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="checkbox-form">
+                            <h3>Detalles de la cuenta</h3>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="checkout-form-list">
+                                        <label>Nombres <span class="required">*</span></label>
+                                        {{ formulario_datos.nombres }}
+                                        {% if formulario_datos.errors.nombres %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.nombres.errors }}</li>
+                                                    {% for error in formulario_ingresar.errors.nombres %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="checkout-form-list">
+                                        <label>Apellidos <span class="required">*</span></label>
+                                        {{ formulario_datos.apellidos }}
+                                        {% if formulario_datos.errors.apellidos %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.apellidos.errors }}</li>
+                                                    {% for error in formulario_ingresar.errors.apellidos %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="checkout-form-list">
+                                        <label>Correo electrónico</label>
+                                        {{ formulario_datos.email }}
+                                        {% if formulario_datos.errors.email %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.email.errors }}</li>
+                                                    {% for error in formulario_ingresar.errors.email %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="checkout-form-list">
+                                        <label>Dirección <span class="required">*</span></label>
+                                        {{ formulario_datos.direccion }}
+                                        {% if formulario_datos.errors.direccion %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.direccion.errors }}</li>
+                                                    {% for error in formulario_ingresar.errors.direccion %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="checkout-form-list">
+                                        <label>DNI <span class="required">*</span></label>
+                                        {{ formulario_datos.dni }}
+                                        {% if formulario_datos.dni.errors %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.dni.errors }}</li>
+                                                    {% for error in formulario_ingresar.dni.errors %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="checkout-form-list">
+                                        <label>Celular <span class="required">*</span></label>
+                                        {{ formulario_datos.celular }}
+                                        {% if formulario_datos.errors.celular %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.celular.errors }}</li>
+                                                    {% for error in formulario_ingresar.errors.celular %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="different-address">
+                                <div class="ship-different-title">
+                                    <h3>
+                                        <label>Datos adicionales del pedido</label>
+                                    </h3>
+                                </div>
+                                <div class="order-notes">
+                                    <div class="checkout-form-list checkout-form-list-2">
+                                        <label>Observación</label>
+                                        {{ formulario_datos.observacion }}
+                                        {% if formulario_datos.errors.observacion %}
+                                            <div class="invalid-feedback">
+                                                <ul>
+                                                    <li>{{ formulario_datos.observacion.errors }}</li>
+                                                    {% for error in formulario_ingresar.errors.observacion %}
+                                                        <li>{{ error }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <div class="your-order">
+                            <h3>Tu carrito de compras</h3>
+                            <div class="your-order-table table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th class="cart-product-name">Producto</th>
+                                        <th class="cart-product-total">Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in listado_carrito %}
+                                        <tr class="cart_item">
+                                            <td class="cart-product-name"> {{ item.descripcion }}<strong
+                                                    class="product-quantity">
+                                                x {{ item.cantidad }}</strong></td>
+                                            <td class="cart-product-total"><span class="amount">$ {{ item.subtotal }}</span></td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                    <tfoot>
+                                    <tr class="order-total">
+                                        <th>Total del pedido</th>
+                                        <td><strong><span class="amount">$ {{ total_carrito }}</span></strong></td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                            <div class="payment-method">
+                                <div class="payment-accordion">
+                                    <div class="order-button-payment">
+                                        <input value="Registrar pedido" type="submit">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Kenne's Checkout Area End Here -->
+{% endblock %}

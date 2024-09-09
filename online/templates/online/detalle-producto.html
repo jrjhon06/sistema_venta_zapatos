@@ -1,0 +1,146 @@
+{% extends "online/layouts/base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+Detalle del producto
+{% endblock %}
+
+{% block contenido %}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>{{ producto.titulo }}</h2>
+            <ul>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">Detalle del producto</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+
+<!-- Begin Kenne's Single Product Area -->
+<div class="sp-area">
+    <div class="container">
+        <div class="sp-nav">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="sp-img_area">
+                        <div class="sp-img_slider slick-img-slider kenne-element-carousel" data-slick-options='{
+                        "slidesToShow": 1,
+                        "arrows": false,
+                        "fade": true,
+                        "draggable": false,
+                        "swipe": false,
+                        "asNavFor": ".sp-img_slider-nav"
+                        }'>
+                        {% for imagen in producto.imagenproducto_set.all %}
+                            <div class="single-slide red zoom">
+                                <img src="{{ imagen.nombre.url }}" alt="Kenne's Product Image">
+                            </div>
+                        {% endfor %}
+                        </div>
+                        <div class="sp-img_slider-nav slick-slider-nav kenne-element-carousel arrow-style-2 arrow-style-3" data-slick-options='{
+                        "slidesToShow": 3,
+                        "asNavFor": ".sp-img_slider",
+                        "focusOnSelect": true,
+                        "arrows" : true,
+                        "spaceBetween": 30
+                        }' data-slick-responsive='[
+                                {"breakpoint":1501, "settings": {"slidesToShow": 3}},
+                                {"breakpoint":1200, "settings": {"slidesToShow": 2}},
+                                {"breakpoint":992, "settings": {"slidesToShow": 4}},
+                                {"breakpoint":768, "settings": {"slidesToShow": 3}},
+                                {"breakpoint":575, "settings": {"slidesToShow": 2}}
+                            ]'>
+                            {% for imagen in producto.imagenproducto_set.all %}
+                                <div class="single-slide red">
+                                    <img src="{{ imagen.nombre.url }}" alt="Kenne's Product Thumnail">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="sp-content">
+                        <div class="sp-heading">
+                            <h5><a href="#">{{ producto.titulo }}</a></h5>
+                            <input type="hidden" id="producto_id" name="producto_id" value="{{ producto.id }}" />
+                        </div>
+                        <div class="sp-essential_stuff">
+                            <ul>
+                                <li>Marca <a href="javascript:void(0)">{{ producto.marca.nombre }}</a></li>
+                                <li>Precio: <a href="javascript:void(0)">$ {{ producto.precio }}</a></li>
+                            </ul>
+                        </div>
+                        <div class="product-size_box">
+                            <span>Medidas</span>
+                            <select id="medida_id" class="myniceselect nice-select">
+                                {% for medida in medidas %}
+                                    <option value="{{ medida.id }}">{{ medida.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="product-size_box">
+                            <span>Colores</span>
+                            <select id="color_id" class="myniceselect nice-select">
+                                {% for color in colores %}
+                                <option value="{{ color.id }}">{{ color.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="quantity">
+                            <label>Cantidad</label>
+                            <div class="cart-plus-minus">
+                                <input class="cart-plus-minus-box" value="1" name="cantidad" id="cantidad" type="number">
+                                <div class="dec qtybutton"><i class="fa fa-angle-down"></i></div>
+                                <div class="inc qtybutton"><i class="fa fa-angle-up"></i></div>
+                            </div>
+                        </div>
+                        <div class="qty-btn_area mb-4">
+                            <ul>
+                                <li><a class="qty-cart_btn" onclick="agregarItem()">Agregar al carrito</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Single Product Area End Here -->
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        function agregarItem(){
+            const data = new FormData();
+            data.append("producto_id", document.getElementById("producto_id").value);
+            data.append("color_id", document.getElementById("color_id").value);
+            data.append("medida_id", document.getElementById("medida_id").value);
+            data.append("cantidad", document.getElementById("cantidad").value);
+            data.append("csrfmiddlewaretoken", "{{ csrf_token }}");
+
+            const ruta = "{% url 'carrito.agregar_item' %}";
+
+            axios.post(ruta, data)
+            .then(function(response){
+                const message = response.data.message;
+                toastr.success(message);
+                setTimeout(function(){
+                    window.location.reload();
+                }, 1500)
+            })
+            .catch(function(error){
+                if(error.response){
+                    const message = error.response.data.message;
+                    toastr.error(message);
+                }else{
+                    toastr.error(error)
+                }
+            })
+        }
+    </script>
+{% endblock %}

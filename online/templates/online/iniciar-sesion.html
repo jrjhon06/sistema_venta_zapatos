@@ -1,0 +1,96 @@
+{% extends "online/layouts/base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+Iniciar sesión
+{% endblock %}
+
+{% block contenido %}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Ingresar como cliente</h2>
+            <ul>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">Iniciar sesión</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+<!-- Begin Kenne's Login Register Area -->
+<div class="kenne-login-register_area">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-xs-12 col-lg-12">
+                <!-- Login Form s-->
+                <form action="#" id="formulario-login">
+                    {% csrf_token %}
+                    <div class="login-form">
+                        <h4 class="login-title">Iniciar sesión</h4>
+                        <div class="row">
+                            <div class="col-md-12 col-12">
+                                <label>Correo electrónico</label>
+                                <input class="form-control" type="email" name="email" placeholder="Correo electrónico">
+                            </div>
+                            <div class="col-12 mb--20">
+                                <label>Contraseña</label>
+                                <input class="form-control" type="password" name="password" placeholder="Contraseña">
+                            </div>
+                            <div class="col-md-12">
+                                <button type="submit" id="btn-login" class="kenne-login_btn">Iniciar sesión</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<!-- Kenne's Login Register Area  End Here -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    document.getElementById("formulario-login").addEventListener("submit", function(evento){
+        evento.preventDefault();
+        login();
+    });
+
+    function login(){
+
+        const ruta = "{% url 'ingresar' %}";
+        const formulario = document.getElementById("formulario-login");
+        const data = new FormData(formulario)
+
+        const boton = document.getElementById("btn-login")
+        boton.disabled == true
+
+        axios.post(ruta, data)
+            .then(function(response){
+                const message = response.data.message;
+                toastr.success(message);
+
+                const ruta_mi_cuenta = "{% url 'mi_cuenta' %}";
+                setTimeout(function(){
+                    window.location.replace(ruta_mi_cuenta)
+                }, 1000);
+            })
+            .catch(function(error){
+                console.log("error")
+                boton.disabled = false
+                if(error.response){
+                    const message = error.response.data.message;
+                    if(error.response.status == 422){
+                        console.table(error.response.data.errors)
+                        mostrarErrores("formulario-login", error.response.data.errors);
+                    }
+                    toastr.error(message)
+                }
+            });
+    }
+</script>
+{% endblock %}

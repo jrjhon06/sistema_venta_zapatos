@@ -1,0 +1,41 @@
+{% extends "online/layouts/base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+Carrito de pedido
+{% endblock %}
+
+{% block contenido %}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>No encontrado</h2>
+            <ul>
+                <li><a href="{% url 'portada' %}">Inicio</a></li>
+                <li class="active">No encontrado</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+<!-- Error Wrapper Start -->
+<div class="error-content_wrapper">
+    <div class="error-area">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-7 col-lg-8 text-center">
+                    <div class="error">
+                        <h1>404</h1>
+                        <h2>OPPS! Página no encontrada</h2>
+                        <p>{{ message }}</p>
+                        <a href="{% url 'portada' %}" class="btn">Ir a la página de portada</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Error Wrapper End -->
+{% endblock %}

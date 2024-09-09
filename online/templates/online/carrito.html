@@ -1,0 +1,143 @@
+{% extends "online/layouts/base.html" %}
+
+{% load static %}
+
+{% block titulo %}
+Carrito de pedido
+{% endblock %}
+
+{% block contenido %}
+<!-- Begin Kenne's Breadcrumb Area -->
+<div class="breadcrumb-area">
+    <div class="container">
+        <div class="breadcrumb-content">
+            <h2>Shop Related</h2>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li class="active">Cart</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- Kenne's Breadcrumb Area End Here -->
+<!-- Begin Uren's Cart Area -->
+<div class="kenne-cart-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <form action="javascript:void(0)">
+                    <div class="table-content table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="kenne-product-remove">Quitar</th>
+                                    <th class="kenne-product-thumbnail">Imagen</th>
+                                    <th class="cart-product-name">Producto</th>
+                                    <th class="kenne-product-price">Precio</th>
+                                    <th class="kenne-product-quantity">Cantidad</th>
+                                    <th class="kenne-product-subtotal">Sub total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in carrito %}
+                                    <tr>
+                                        <td class="kenne-product-remove">
+                                            <a onclick="quitarItem({{ forloop.counter0 }})">
+                                                <i class="fa fa-trash"title="Remove"></i>
+                                            </a>
+                                        </td>
+                                        <td class="kenne-product-thumbnail"><a href="javascript:void(0)"><img width="200px" src="{{ item.imagen }}" alt="Uren's Cart Thumbnail"></a></td>
+                                        <td class="kenne-product-name"><a href="javascript:void(0)">{{ item.descripcion }}</a></td>
+                                        <td class="kenne-product-price"><span class="amount">${{ item.precio }}</span></td>
+                                        <td class="">
+                                            <input onchange="modificarCantidad(this, {{ forloop.counter0 }})" class="text-center" style="max-width:50px" value="{{ item.cantidad }}" type="number">
+                                        </td>
+                                        <td class="product-subtotal"><span class="amount">$ {{ item.subtotal }}</span></td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 ml-auto">
+                            <div class="cart-page-total">
+                                <h2>Totales</h2>
+                                <ul>
+                                    <li>Total <span>${{ total_carrito }}</span></li>
+                                </ul>
+                                <a href="{% url 'confirmar_pedido' %}">Confirmar pedido</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Uren's Cart Area End Here -->
+{% endblock %}
+
+{% block javascript %}
+<script>
+    function quitarItem(indice){
+        Swal.fire(
+            {
+                title: '¿Está seguro que desea quitar el producto?',
+                showCancelButton: true,
+                cancelButtonText: 'Cancelar',
+                confirmButtonText: 'S, quitar producto',
+                icon: 'error'
+            }
+        ).then(function(respuesta){
+            if(respuesta.isConfirmed){
+                const ruta = "{% url 'carrito.quitar_item' %}"
+                const data = new FormData()
+                data.append("indice", indice)
+                data.append("csrfmiddlewaretoken", "{{ csrf_token }}")
+                axios.post(ruta, data)
+                .then(function(respuesta){
+                    const message = respuesta.data.message;
+                    toastr.success(message);
+                    setTimeout(function(){
+                        window.location.reload()
+                    }, 1000)
+                })
+                .catch(function(error){
+                    if(error.response){
+                        const message = error.response.data.message
+                        toastr.error(message);
+                    }
+                });
+
+            }
+        });
+    }
+
+    function modificarCantidad(cajaTexto, indice){
+        const cantidad = cajaTexto.value;
+        const data = new FormData();
+        data.append("cantidad", cantidad)
+        data.append("indice", indice)
+        data.append("csrfmiddlewaretoken", "{{ csrf_token }}")
+        const ruta = "{% url 'carrito.modificar_cantidad' %}";
+        axios.post(ruta, data)
+        .then(function(respuesta){
+            const message = respuesta.data.message;
+            toastr.success(message);
+            setTimeout(function(){
+                window.location.reload()
+            }, 1000)
+        })
+        .catch(function(error){
+            if(error.response){
+                const message = error.response.data.message
+                toastr.error(message);
+            }
+        });
+    }
+</script>
+{% endblock %}
